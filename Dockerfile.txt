@@ -1,0 +1,13 @@
+FROM ubuntu:22.04
+
+# Install FFmpeg
+RUN apt-get update && apt-get install -y ffmpeg
+
+WORKDIR /app
+COPY video.mp4 /app/video.mp4
+
+# Run the stream loop
+CMD ffmpeg -re -stream_loop -1 -i video.mp4 \
+    -c:v libx264 -preset ultrafast -b:v 2500k -maxrate 2500k -bufsize 5000k \
+    -g 60 -c:a aac -b:a 128k -ar 44100 \
+    -f flv "rtmp://a.rtmp.youtube.com/live2/0a09-jzka-fum2-8ez9-2uzs"
